@@ -6,6 +6,9 @@ http://search.cpan.org/~dormando/MogileFS-Client/lib/MogileFS/Client.pm
 
 This module is a client library for the MogileFS distributed file system
 """
+
+from __future__ import absolute_import, print_function, unicode_literals
+
 from pymogile.backend import Backend
 from pymogile.exceptions import MogileFSError
 from pymogile.file import NormalHTTPFile, LargeHTTPFile
@@ -77,7 +80,7 @@ class Client(object):
     if 'dev_count' not in res:
       dests.append((res['devid'], res['path']))
     else:
-      for x in xrange(1, int(res['dev_count']) + 1):
+      for x in range(1, int(res['dev_count']) + 1):
         devid_key = 'devid_%d' % x
         path_key = 'path_%s' % x
         dests.append((res[devid_key], res[path_key]))
@@ -216,7 +219,7 @@ class Client(object):
               'pathcount': pathcount}
 
     res = self.backend.do_request('get_paths', params)
-    paths = [res["path%d" % x] for x in xrange(1, int(res["paths"]) + 1)]
+    paths = [res["path%d" % x] for x in range(1, int(res["paths"]) + 1)]
 
     self.run_hook('get_paths_end', key)
     return paths
@@ -291,7 +294,7 @@ class Client(object):
 
     res = self.backend.do_request('list_keys', params)
     results = []
-    for x in xrange(1, int(res['key_count']) + 1):
+    for x in range(1, int(res['key_count']) + 1):
       results.append(res['key_%d' % x])
     return results
 

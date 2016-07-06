@@ -1,9 +1,11 @@
 #! coding: utf-8
 # pylint: disable-msg=W0311
+from __future__ import absolute_import, print_function, unicode_literals
+
 import time
 import random
 import unittest
-from cStringIO import StringIO
+from six import StringIO
 from pymogile import Client, Admin, MogileFSError
 
 TEST_NS = "mogilefs.client::test_client"
@@ -192,7 +194,7 @@ class TestClient(unittest.TestCase):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
 
-    data = ''.join(random.choice("0123456789") for _ in xrange(8192 * 2))
+    data = ''.join(random.choice("0123456789") for _ in range(8192 * 2))
     fp = StringIO(data)
     length = client.store_file(key, fp)
     self.assertEqual(length, len(data))
@@ -204,7 +206,7 @@ class TestClient(unittest.TestCase):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
 
-    data = ''.join(random.choice("0123456789") for _ in xrange(8192 * 2))
+    data = ''.join(random.choice("0123456789") for _ in range(8192 * 2))
     length = client.store_content(key, data)
     self.assertEqual(length, len(data))
 
@@ -234,7 +236,7 @@ class TestClient(unittest.TestCase):
 
   def test_mkcol(self):
     client = Client(TEST_NS, HOSTS)
-    for x in xrange(0, 10):
+    for x in range(0, 10):
       key = 'test_file_%s_%s_%d' % (random.random(), time.time(), x)
       client.new_file(key).write("SPAM%s" % x)
       paths = client.get_paths(key)

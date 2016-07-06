@@ -20,23 +20,20 @@ auth = {'username': 'myuser', 'password': 'mypass'}
 put.put(bytes, 'http://example.org/test', **auth)
 """
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 import sys
 import base64
-import urllib2
-import httplib
-import urlparse
 from optparse import OptionParser
-try:
-  from cStringIO import StringIO
-except ImportError:
-  from StringIO import StringIO
+from six.moves import http_client, urllib
+from six import StringIO
 
 # True by default when running as a script
 # Otherwise, we turn the noise off...
 verbose = False
 
 def barf(msg):
-  print >> sys.stderr, "Error! %s" % msg
+  print("Error! %s" % msg, file=sys.stderr)
   sys.exit(1)
 
 if sys.version_info < (2, 4):
@@ -51,7 +48,7 @@ def parseuri(uri):
   ('example.net', 8080, '/test.html')
   """
 
-  scheme, netplace, path, query, fragid = urlparse.urlsplit(uri)
+  scheme, netplace, path, query, fragid = urllib.parse.urlsplit(uri)
 
   if ':' in netplace:
     host, port = netplace.split(':', 2)
@@ -76,7 +73,7 @@ def putfile(f, uri, username=None, password=None):
 
   while True:
     # Attempt to HTTP PUT the data
-    h = httplib.HTTPConnection(host, port)
+    h = http_lib.HTTPConnection(host, port)
 
     h.putrequest('PUT', path)
 
@@ -109,7 +106,7 @@ def putfile(f, uri, username=None, password=None):
     # Got a response, now decide how to act upon it
     if status in redirect:
       location = resp.getheader('Location')
-      uri = urlparse.urljoin(uri, location)
+      uri = urllib.parse.urljoin(uri, location)
       host, port, path = parseuri(uri)
 
       # We may have to authenticate again
@@ -135,7 +132,7 @@ def putfile(f, uri, username=None, password=None):
       if scheme in set(['basic', 'digest']):
         if verbose:
           msg = "Performing %s Authentication..." % scheme.capitalize()
-          print >> sys.stderr, msg
+          print(msg, file=sys.stderr)
       else: barf("Unknown authentication scheme: %s" % scheme)
 
       if scheme == 'basic':
@@ -146,7 +143,7 @@ def putfile(f, uri, username=None, password=None):
       elif scheme == 'digest':
         if verbose:
           msg = "uses fragile, undocumented features in urllib2"
-          print >> sys.stderr, "Warning! Digest Auth %s" % msg
+          print("Warning! Digest Auth %s" % msg, file=sys.stderr)
 
 
         passwd = type('Password', (object,), {
@@ -162,7 +159,7 @@ def putfile(f, uri, username=None, password=None):
         })()
 
         # Cf. urllib2.AbstractDigestAuthHandler.retry_http_digest_auth
-        auth = urllib2.AbstractDigestAuthHandler(passwd)
+        auth = urllib.request.AbstractDigestAuthHandler(passwd)
         token, challenge = wwwauth.split(' ', 1)
         chal = urllib2.parse_keqv_list(urllib2.parse_http_list(challenge))
         userpass = auth.get_authorization(req, chal)
@@ -171,15 +168,15 @@ def putfile(f, uri, username=None, password=None):
     elif status in okay:
       if (username and password) and (not authorized):
         msg = "Warning! The supplied username and password went unused"
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
       if verbose:
         resultLine = "Success! Resource %s"
         statuses = {200: 'modified', 201: 'created', 204: 'modified'}
-        print resultLine % statuses[status]
+        print(resultLine % statuses[status])
 
         statusLine = "Response-Status: %s %s"
-        print statusLine % (status, resp.reason)
+        print(statusLine % (status, resp.reason))
 
         body = resp.read(58)
         body = body.rstrip('\r\n')
@@ -189,7 +186,7 @@ def putfile(f, uri, username=None, password=None):
           body = body[:57] + '[...]'
 
         bodyLine = 'Response-Body: "%s"'
-        print bodyLine % body
+        print(bodyLine % body)
       break
 
     # @@ raise PutError, do the catching in main?

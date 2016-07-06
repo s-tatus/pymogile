@@ -1,15 +1,19 @@
 #! coding: utf-8
 # pylint: disable-msg=W0311
+from __future__ import absolute_import, print_function, unicode_literals
+
 import re
 import time
 import select
 import socket
 import signal
 import random
-import urllib
 import logging
+
 from cgi import parse_qs
 from errno import EINPROGRESS, EISCONN
+
+from six.moves import urllib
 
 from pymogile.exceptions import MogileFSError
 
@@ -32,8 +36,8 @@ def _encode_url_string(args):
     return ''
   buf = []
   for k, v in args.items():
-    buf.append('%s=%s' % (urllib.quote_plus(str(k)),
-                urllib.quote_plus(str(v))))
+    buf.append('%s=%s' % (urllib.parse.quote_plus(str(k)),
+                urllib.parse.quote_plus(str(v))))
   return '&'.join(buf)
 
 def _decode_url_string(arg):
@@ -109,7 +113,7 @@ class Backend(object):
                         self.last_host_connected)
           raise MogileFSError("""
           send() didn't return expected length (%s, not %s)""" % (rv, reqlen))
-      except socket.error, e:
+      except socket.error as e:
         self.run_hook('do_request_send_error', cmd, self.last_host_connected)
         self._sock_cache = None
 
@@ -126,7 +130,7 @@ class Backend(object):
       # send FLAG_NOSIGNAL
       try:
         rv = sock.send(req, FLAG_NOSIGNAL)
-      except socket.error, e:
+      except socket.error as e:
         self.run_hook('do_request_send_error', cmd, self.last_host_connected)
         raise MogileFSError("""
         couldn't send command: [%s]. reason: %s""" % (req, e))
@@ -158,7 +162,8 @@ class Backend(object):
 
     matcher = ERR_RE.match(line)
     if matcher:
-      self.lasterr, self.lasterrstr = map(urllib.unquote_plus, matcher.groups())
+      self.lasterr = urllib.parse.unquote_plus(matcher.group(1))
+      self.lasterrstr = urllib.parse.unquote_plus(matcher.group(2))
       LOG.debug("LASTERR: %s %s" % (self.lasterr, self.lasterrstr))
       raise MogileFSError(self.lasterrstr, self.lasterr)
 
@@ -231,7 +236,7 @@ class Backend(object):
     idx = random.randint(0, tries)
     now = time.time()
 
-    for _ in xrange(1, tries + 1):
+    for _ in range(1, tries + 1):
       tracker = self._hosts[idx % size]
       idx += 1
       # try dead trackers every 5 seconds

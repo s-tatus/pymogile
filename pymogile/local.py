@@ -19,11 +19,13 @@ of the specific IOExceptions raised by the filesystem.  And public fields like
 ``domain`` and ``trackers`` will be accessible but have empty values.
 """
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 import os
 import shutil
-import urlparse
 from os import path as osp
 
+from six.moves import urllib
 
 class MogileFSError(Exception):
   """
@@ -186,7 +188,7 @@ class Client:
         return fp.read()
       finally:
         fp.close()
-    except IOError, e:
+    except IOError as e:
       return self.croak('IO error retrieving %s: %s' % (key, str(e)))
 
   def new_file(self, key, cls=None, bytes=0):
@@ -216,7 +218,7 @@ class Client:
     try:
       self._ensure_dirs_exist(key)
       return open(self._real_path(key), 'w')
-    except IOError, e:
+    except IOError as e:
       return self.croak('IO error creating file for %s: %s' % (key, str(e)))
 
 
@@ -239,7 +241,7 @@ class Client:
         return True
       else:
         return False
-    except (IOError, OSError), e:
+    except (IOError, OSError) as e:
       return self.croak('IO error deleting file %s: %s' % (key, str(e)))
 
   def rename(self, fkey, tkey):
@@ -252,7 +254,7 @@ class Client:
         return True
       else:
         return False
-    except OSError, e:
+    except OSError as e:
       return self.croak('OS error renaming %s to %s: %s' %
           (fkey, tkey, str(e)))
 
@@ -341,7 +343,7 @@ class Client:
     start = 0
     raw_list.sort()
     if after is not None:
-      for i, path in zip(xrange(len(raw_list)), raw_list):
+      for i, path in zip(range(len(raw_list)), raw_list):
         if path == after:
           start = i + 1
 
@@ -377,7 +379,7 @@ class Admin:
   """
 
   def __init__(self, url):
-    self.url = urlparse.urlparse(url)
+    self.url = urllib.parse.urlparse(url)
 
   def get_hosts(self, hostid=None):
     return ['%s://%s' % (self.url[0], self.url[1])]

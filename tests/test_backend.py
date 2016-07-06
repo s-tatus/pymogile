@@ -1,5 +1,7 @@
 #! coding: utf-8
 # pylint: disable-msg=W0311
+from __future__ import absolute_import, print_function, unicode_literals
+
 import unittest
 from pymogile.backend import Backend
 from pymogile.exceptions import MogileFSError
@@ -42,7 +44,7 @@ class TestBackend(unittest.TestCase):
       self.backend.do_request()   # pylint: disable-msg=E1120
     except TypeError:
       pass
-    except Exception, e:
+    except Exception as e:
       assert False, "TypeError expected, actual %r" % e
     else:
       assert False

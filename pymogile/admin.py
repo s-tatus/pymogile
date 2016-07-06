@@ -1,8 +1,11 @@
 #! coding: utf-8
 # pylint: disable-msg=W0311
+from __future__ import absolute_import, print_function, unicode_literals
+
 from pymogile.backend import Backend
 from pymogile.exceptions import MogileFSError
 
+import six
 
 class Admin(object):
   def __init__(self, trackers, readonly=False, timeout=None):
@@ -18,7 +21,7 @@ class Admin(object):
     else:
       params = None
     res = self.backend.do_request("get_hosts", params)
-    print res
+    print(res)
     results = []
     fields = ["hostid",
               "status",
@@ -28,7 +31,7 @@ class Admin(object):
               "http_get_port",
               "altip altmask"]
     hosts = int(res['hosts']) + 1
-    for ct in xrange(1, hosts):
+    for ct in range(1, hosts):
       results.append(dict([(f, res.get('host%d_%s' % (ct, f))) for f in fields]))
     return results
 
@@ -39,7 +42,7 @@ class Admin(object):
       params = None
     res = self.backend.do_request("get_devices", params)
     ret = []
-    for x in xrange(1, int(res['devices']) + 1):
+    for x in range(1, int(res['devices']) + 1):
       device = {}
       for k in ('devid', 'hostid', 'status', 'observed_state', 'utilization'):
         device[k] = res.get('dev%d_%s' % (x, k))
@@ -62,7 +65,7 @@ class Admin(object):
     """
     res = self.backend.do_request('list_fids', {'from': from_fid, 'to': to_fid})
     results = {}
-    for x in xrange(1, int(res['fid_count']) + 1):
+    for x in range(1, int(res['fid_count']) + 1):
       key = 'fid_%d_fid' % x
       results[key] = dict([(k, res['fid_%d_%s' % (x, k)]) \
                            for k in ('key', 'length', 'class', 'domain', 'devcount')])
@@ -86,11 +89,11 @@ class Admin(object):
     res = self.backend.do_request('get_domains')
     domain_length = int(res['domains'])
     ret = {}
-    for x in xrange(1, domain_length + 1):
+    for x in range(1, domain_length + 1):
       domain_name = res['domain%d' % x]
       ret.setdefault(domain_name, {})
       class_length = int(res['domain%dclasses' % x])
-      for y in xrange(1, class_length + 1):
+      for y in range(1, class_length + 1):
         k = 'domain%dclass%dname' % (x, y)
         v = 'domain%dclass%dmindevcount' % (x, y)
         ret[domain_name][res[k]] = int(res[v])
@@ -199,7 +202,7 @@ class Admin(object):
     change the weight of a device by passing in the hostname and
     the device id
     """
-    if not isinstance(weight, (int, long)):
+    if not isinstance(weight, six.integer_types):
       raise ValueError('argument weight muse be an integer')
     params = {'host': host, 'device': device, 'weight': weight}
     return self.backend.do_request('set_weight', params)
@@ -320,7 +323,7 @@ class Admin(object):
 
     row_count = int(res['row_count'])
     ret = []
-    for x in xrange(1, row_count + 1):
+    for x in range(1, row_count + 1):
       rec = {}
       for k in ("logid", "utime", "fid", "evcode", "devid"):
         rec[k] = res.get("row_%d_%s" % (x, k))
@@ -336,7 +339,7 @@ class Admin(object):
     if not res:
       return
     ret = {}
-    for x in xrange(1, int(res["key_count"]) + 1):
+    for x in range(1, int(res["key_count"]) + 1):
       key = res.get("key_%d" % x, '')
       value = res.get("value_%d" % x, '')
       ret[key] = value
@@ -378,7 +381,7 @@ class Admin(object):
     # get replication statistics
     if 'replicationcount' in res:
       replication = ret.setdefault('replication', {})
-      for x in xrange(1, int(res['replicationcount']) + 1):
+      for x in range(1, int(res['replicationcount']) + 1):
         domain = res.get('replication%ddomain' % x, '')
         cls = res.get('replication%dclass' % x, '')
         devcount = res.get('replication%ddevcount' % x, '')
@@ -388,7 +391,7 @@ class Admin(object):
     # get file statistics
     if 'filescount' in res:
       files = ret.setdefault('files', {})
-      for x in xrange(1, int(res['filescount']) + 1):
+      for x in range(1, int(res['filescount']) + 1):
         domain = res.get('files%ddomain' % x, '')
         cls = res.get('files%dclass' % x, '')
         (files.setdefault(domain, {}))[cls] = res.get('files%dfiles' % x)
@@ -396,7 +399,7 @@ class Admin(object):
     # get device statistics
     if 'devicescount' in res:
       devices = ret.setdefault('devices', {})
-      for x in xrange(1, int(res['devicescount']) + 1):
+      for x in range(1, int(res['devicescount']) + 1):
         key = res.get('devices%did' % x, '')
         devices[key] = {'host': res.get('devices%dhost' % x),
                         'status': res.get('devices%dstatus' % x),

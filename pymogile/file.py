@@ -1,11 +1,12 @@
 #! coding: utf-8
 # pylint: disable-msg=W0311, E1101, E1103
-import put
-import logging
-import httplib
-import urlparse
-from cStringIO import StringIO
+from __future__ import absolute_import, print_function, unicode_literals
 
+from . import put
+import logging
+
+from six import StringIO
+from six.moves import http_client, urllib
 from pymogile.exceptions import MogileFSError, HTTPError
 
 
@@ -14,7 +15,11 @@ def is_success(response):
 
 def get_content_length(response):
   try:
-    return long(response.getheaders('content-length'))
+    length = response.getheaders('content-length')
+    if six.PY2:
+      return long(length)
+    else:
+      return int(length)
   except (TypeError, ValueError):
     return 0
 
@@ -40,15 +45,15 @@ class HTTPFile(object):
       try:
         self.close()
         self._is_closed = True
-      except Exception, e:
+      except Exception as e:
         logging.debug("got an exception in __del__: %s" % str(e))
 
   def _makedirs(self, path):
-    url = urlparse.urlsplit(path)
+    url = urllib.parse.urlsplit(path)
     if url.scheme == 'http':
-      connection = httplib.HTTPConnection
+      connection = http_client.HTTPConnection
     elif url.scheme == 'https':
-      connection = httplib.HTTPSConnection
+      connection = http_client.HTTPSConnection
     else:
       raise ValueError("unsupported url scheme")
 
@@ -66,7 +71,7 @@ class HTTPFile(object):
       raise ValueError("Invalid path '%s'. Maybe the file isn't MogileFS FID" % url.path)
 
     created = False
-    for idx in xrange(3, length + 1):
+    for idx in range(3, length + 1):
       # recursively create directories
       # /dev1/0/
       # /dev1/0/000/
@@ -87,18 +92,18 @@ class HTTPFile(object):
     return created
 
   def _request(self, path, method, *args, **kwds):
-    url = urlparse.urlsplit(path)
+    url = urllib.parse.urlsplit(path)
     if url.scheme == 'http':
-      connection = httplib.HTTPConnection
+      connection = http.client.HTTPConnection
     elif url.scheme == 'https':
-      connection = httplib.HTTPSConnection
+      connection = http.client.HTTPSConnection
     elif not url.scheme:
       raise ValueError("url scheme is empty")
     else:
       raise ValueError("unsupported url scheme '%s'" % url.scheme)
 
     conn = connection(url.netloc)
-    target = urlparse.urlunsplit((None, None, url.path, url.query, url.fragment))
+    target = urllib.parse.urlunsplit((None, None, url.path, url.query, url.fragment))
     conn.request(method, target, *args, **kwds)
     res = conn.getresponse()
     if is_success(res):
@@ -181,8 +186,8 @@ class LargeHTTPFile(HTTPFile):
 
     try:
       res = self._request(self._path, "GET", headers=headers)
-    except HTTPError, e:
-      if e.code == httplib.REQUESTED_RANGE_NOT_SATISFIABLE:
+    except HTTPError as e:
+      if e.code == http.client.REQUESTED_RANGE_NOT_SATISFIABLE:
         self._eof = 1
         return ''
       else:
@@ -236,7 +241,7 @@ class LargeHTTPFile(HTTPFile):
           params.update(self.create_close_arg)
         try:
           self.mg.backend.do_request('create_close', params)
-        except MogileFSError, e:
+        except MogileFSError as e:
           if e.err != 'empty_file':
             raise
 
@@ -303,7 +308,7 @@ class NormalHTTPFile(HTTPFile):
           devid = tried_devid
           path = tried_path
           break
-        except HTTPError, e:
+        except HTTPError as e:
           continue
       else:
         devid = None
@@ -325,7 +330,7 @@ class NormalHTTPFile(HTTPFile):
           params.update(self.create_close_arg)
         try:
           self.mg.backend.do_request('create_close', params)
-        except MogileFSError, e:
+        except MogileFSError as e:
           if e.err != 'empty_file':
             raise
 

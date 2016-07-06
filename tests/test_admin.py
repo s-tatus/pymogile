@@ -1,6 +1,9 @@
 #! coding: utf-8
 # pylint: disable-msg=W0311
+from __future__ import absolute_import, print_function, unicode_literals
+
 import unittest
+import six
 from pymogile import Admin
 
 
@@ -55,17 +58,17 @@ class AdminTest(unittest.TestCase):
     devices = self.mogilefs.get_devices()
     assert devices
     for d in devices:
-      assert d.has_key('devid')
-      assert d.has_key('hostid')
-      assert d.has_key('status')
-      assert d.has_key('observed_state')
-      assert d.has_key('utilization')
-      assert d.has_key('mb_total')
-      assert d.has_key('mb_used')
-      assert d.has_key('weight')
-      #assert isinstance(d['mb_total'], (int, long))
-      #assert isinstance(d['mb_used'], (int, long))
-      #assert isinstance(d['weight'], (int, long))
+      assert 'devid' in d
+      assert 'hostid' in d
+      assert 'status' in d
+      assert 'observed_state' in d
+      assert 'utilization' in d
+      assert 'mb_total' in d
+      assert 'mb_used' in d
+      assert 'weight' in d
+      #assert isinstance(d['mb_total'], six.integer_types)
+      #assert isinstance(d['mb_used'], six.integer_types)
+      #assert isinstance(d['weight'], six.integer_types)
 
   def test_create_delete_host(self):
     self.assertEqual(self.mogilefs.create_host('testhost', '192.168.0.1', 7500),
