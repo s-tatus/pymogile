@@ -47,6 +47,3 @@ False
 >>> datastore.delete('foo.txt')
 True
 >>> datastore.get_file_data('foo.txt')
-
-
-

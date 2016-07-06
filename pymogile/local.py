@@ -11,7 +11,7 @@ In general, this tries to be faithful to the semantics of the API, but if you
 dig deep enough there are bound to be differences.  For example, MogileFS stores
 its actual files with a .fid extension, always, while this stores them under
 whatever key you supply.  If you depend on the extension of the URL, they
-probably won't match up.  
+probably won't match up.
 
 Similarly, exact error messages are unlikely to be consistent, though I've
 tried to use the same class names so you can just catch MogileFSError instead
@@ -19,7 +19,7 @@ of the specific IOExceptions raised by the filesystem.  And public fields like
 ``domain`` and ``trackers`` will be accessible but have empty values.
 """
 
-import os 
+import os
 import shutil
 import urlparse
 from os import path as osp
@@ -39,8 +39,8 @@ class Client:
   setitem, delitem, and iter), and that's the preferred interface if you
   don't need to deal with bigfiles or storage classes.
   """
-  def __init__(self, 
-               domain="Local filesystem", 
+  def __init__(self,
+               domain="Local filesystem",
                trackers=['http://127.0.0.1:7001/'],
                readonly=False):
     """
@@ -50,7 +50,7 @@ class Client:
 
     >>> datastore = _make_test_client()
 
-    Here, _make_test_client is a helper function that just returns 
+    Here, _make_test_client is a helper function that just returns
     Client('/var/mogdata', ['http://127.0.0.1:7500']), for easy
     doctesting.
 
@@ -97,7 +97,7 @@ class Client:
       os.makedirs(osp.join(self.dir, osp.dirname(key)))
     except OSError:
       pass
-  
+
   def _copy_file_or_filename(self, fp_or_path, dest_key):
     if hasattr(fp_or_path, 'read'):
       shutil.copyfileobj(fp_or_path, self.new_file(dest_key))
@@ -133,7 +133,7 @@ class Client:
     return osp.join(self.dir, key)
 
   def _real_key(self, path):
-    return path[len(self.dir) + 1:] 
+    return path[len(self.dir) + 1:]
 
   def croak(self, msg):
     """
@@ -219,13 +219,13 @@ class Client:
     except IOError, e:
       return self.croak('IO error creating file for %s: %s' % (key, str(e)))
 
-    
+
   def store_file(self):
     pass
-  
+
   def store_content(self):
     pass
-  
+
   def update_class(self):
     pass
 
@@ -253,7 +253,7 @@ class Client:
       else:
         return False
     except OSError, e:
-      return self.croak('OS error renaming %s to %s: %s' % 
+      return self.croak('OS error renaming %s to %s: %s' %
           (fkey, tkey, str(e)))
 
   def get_paths(self, key, noverify=0, zone='alt', pathcount=2):
@@ -289,7 +289,7 @@ class Client:
     ('', [])
 
     If ``after`` is specified, it starts the list at the key after
-    ``after``.  
+    ``after``.
 
     >>> datastore.list_keys('test', 'test4')
     ('test9', ['test5', 'test6', 'test7', 'test8', 'test9'])
@@ -300,7 +300,7 @@ class Client:
     >>> datastore.list_keys('test', 'test9')
     ('', [])
 
-    If ``limit`` is specified, at most that many elements will be returned.  
+    If ``limit`` is specified, at most that many elements will be returned.
 
     >>> datastore.list_keys('test', None, 2)
     ('test1', ['test0', 'test1'])
@@ -365,7 +365,7 @@ class Client:
     No-op for API compatibility.
     """
     pass
-  
+
 
 class Admin:
   """
@@ -405,43 +405,43 @@ class Admin:
 
   def change_device_state(self, host, device, state):
     return True
-  
+
   def change_device_weight(self, *args):
     return True
-  
+
   def slave_list(self):
     pass
-  
+
   def slave_add(self):
     pass
-  
+
   def slave_modify(self):
     pass
-  
+
   def slave_delete(self):
     pass
-  
+
   def fsck_start(self):
     pass
-  
+
   def fsck_stop(self):
     pass
-  
+
   def fsck_reset(self):
     pass
-  
+
   def fsck_clearlog(self):
     pass
-  
+
   def fsck_status(self):
     pass
-  
+
   def fsck_log_rows(self):
     pass
-  
+
   def set_server_setting(self):
     pass
-  
+
   def server_settings(self):
     pass
 

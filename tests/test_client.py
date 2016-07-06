@@ -16,17 +16,17 @@ class TestClient(unittest.TestCase):
       self.moga.create_domain(TEST_NS)
     except MogileFSError:
       pass
-  
+
   def tearDown(self):
     try:
       self.moga.delete_domain(TEST_NS)
     except MogileFSError:
       pass
-  
+
   def test_sleep(self):
     client = Client(TEST_NS, HOSTS)
     self.assertEqual(client.sleep(1), True)
-  
+
   def test_list_keys(self):
     keys = ["spam", "egg", "ham"]
     domain = "test:list_keys:%s:%s:%s" % (random.random(), time.time(), TEST_NS)
@@ -67,7 +67,7 @@ class TestClient(unittest.TestCase):
 
     content = client.get_file_data(key)
     assert content == data
-#  
+#
 #  def test_new_large_file(self):
 #    client = Client(TEST_NS, HOSTS)
 #
@@ -85,18 +85,18 @@ class TestClient(unittest.TestCase):
 #
 #    content = client.get_file_data(key)
 #    assert content == "0123456789" * 50
-  
+
   def test_new_file_unexisting_class(self):
     client = Client(TEST_NS, HOSTS)
 
     key = 'test_file_%s_%s' % (random.random(), time.time())
     self.assertRaises(MogileFSError, client.new_file, key, 'unexisting')
-  
+
   def test_new_file_unexisting_domain(self):
     client = Client('unexisting_domain', HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
     self.assertRaises(MogileFSError, client.new_file, key)
-  
+
   def test_closed_file(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
@@ -109,7 +109,7 @@ class TestClient(unittest.TestCase):
     self.assertRaises(ValueError, fp.seek, 0)
     self.assertRaises(ValueError, fp.tell)
 
-  
+
 #  def test_readonly_file(self):
 #    client = Client(TEST_NS, HOSTS)
 #    key = 'test_file_%s_%s' % (random.random(), time.time())
@@ -122,7 +122,7 @@ class TestClient(unittest.TestCase):
 #      pass
 #    else:
 #      assert False, "operation not permitted to read-only file"
-  
+
   def test_seek(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
@@ -131,11 +131,11 @@ class TestClient(unittest.TestCase):
     fp.write("SPAM")
     fp.seek(1)
     self.assertEqual(fp.tell(), 1)
-    
+
     fp.write("p")
     fp.close()
     self.assertEqual(client.get_file_data(key), "SpAM")
-  
+
   def test_seek_negative(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
@@ -144,11 +144,11 @@ class TestClient(unittest.TestCase):
     fp.write("SPAM")
     fp.seek(-10)
     self.assertEqual(fp.tell(), 0)
-    
+
     fp.write("s")
     fp.close()
     self.assertEqual(client.get_file_data(key), "sPAM")
-  
+
   def test_seek_read(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
@@ -158,12 +158,12 @@ class TestClient(unittest.TestCase):
     fp = client.read_file(key)
     fp.seek(1)
     self.assertEqual(fp.tell(), 1)
-    
+
     content = fp.read(3)
     assert content == "123"
     self.assertEqual(fp.tell(), 4)
 
-  def test_rename(self): 
+  def test_rename(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
     client.new_file(key).write(key)
@@ -178,7 +178,7 @@ class TestClient(unittest.TestCase):
     content = client.get_file_data(newkey)
     assert content == key
 
-  def test_rename_dupliate_key(self): 
+  def test_rename_dupliate_key(self):
     client = Client(TEST_NS, HOSTS)
     key1 = 'test_file_%s_%s' % (random.random(), time.time())
     key2 = 'key2:' + key1
@@ -188,7 +188,7 @@ class TestClient(unittest.TestCase):
 
     self.assertEqual(client.rename(key1, key2), False)
 
-  def test_store_file(self): 
+  def test_store_file(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
 
@@ -200,7 +200,7 @@ class TestClient(unittest.TestCase):
     content = client.get_file_data(key)
     self.assertEqual(content, data)
 
-  def test_store_content(self): 
+  def test_store_content(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
 
@@ -211,7 +211,7 @@ class TestClient(unittest.TestCase):
     content = client.get_file_data(key)
     self.assertEqual(content, data)
 
-  def test_read_file(self): 
+  def test_read_file(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
     client.store_content(key, key)
@@ -220,7 +220,7 @@ class TestClient(unittest.TestCase):
     self.assertNotEqual(fp, None)
     self.assertEqual(key, fp.read())
 
-  def test_delete(self): 
+  def test_delete(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
 
@@ -232,7 +232,7 @@ class TestClient(unittest.TestCase):
     paths = client.get_paths(key)
     self.assertFalse(paths)
 
-  def test_mkcol(self): 
+  def test_mkcol(self):
     client = Client(TEST_NS, HOSTS)
     for x in xrange(0, 10):
       key = 'test_file_%s_%s_%d' % (random.random(), time.time(), x)
@@ -241,7 +241,7 @@ class TestClient(unittest.TestCase):
       self.assertTrue(paths)
 
 
-#  def test_edit_file(self): 
+#  def test_edit_file(self):
 #    cl = Client(TEST_NS, HOSTS)
 #    key = 'test_file_%s_%s' % (random.random(), time.time())
 #
@@ -257,8 +257,8 @@ class TestClient(unittest.TestCase):
 #    fp.close()
 #
 #    assert cl.get_file_data(key) == "sPaM"
-  
-  def test_file_like_object(self): 
+
+  def test_file_like_object(self):
     client = Client(TEST_NS, HOSTS)
     key = 'test_file_%s_%s' % (random.random(), time.time())
 
@@ -269,12 +269,12 @@ class TestClient(unittest.TestCase):
     line = fp.readline()
     self.assertEqual(line, "spam\n")
     line = fp.readline()
-    
+
     self.assertEqual(line, "egg\n")
     line = fp.readline()
-    
+
     self.assertEqual(line, "ham\n")
-    
+
     line = fp.readline()
     self.assertEqual(line, '')
 
@@ -283,6 +283,6 @@ class TestClient(unittest.TestCase):
     self.assertEqual(lines, ["spam\n", "egg\n", "ham\n"])
 
     fp.close()
-          
+
 if __name__ == "__main__":
   unittest.main()

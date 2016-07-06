@@ -117,17 +117,17 @@ class HTTPFile(object):
 
 
 class LargeHTTPFile(HTTPFile):
-  def __init__(self, 
-               path, 
-               backup_dests=None, 
+  def __init__(self,
+               path,
+               backup_dests=None,
                overwrite=False,
-               mg=None, 
-               fid=None, 
-               devid=None, 
-               cls=None, 
-               key=None, 
-               readonly=False, 
-               create_close_arg=None, 
+               mg=None,
+               fid=None,
+               devid=None,
+               cls=None,
+               key=None,
+               readonly=False,
+               create_close_arg=None,
                **kwds):
 
     super(LargeHTTPFile, self).__init__(mg, fid, key, cls, create_close_arg)
@@ -254,15 +254,15 @@ class LargeHTTPFile(HTTPFile):
 
 
 class NormalHTTPFile(HTTPFile):
-  def __init__(self, 
-               path, 
-               devid, 
+  def __init__(self,
+               path,
+               devid,
                backup_dests=None,
-               mg=None, 
-               fid=None, 
-               cls=None, 
-               key=None, 
-               create_close_arg=None, 
+               mg=None,
+               fid=None,
+               cls=None,
+               key=None,
+               create_close_arg=None,
                **kwds):
 
     super(NormalHTTPFile, self).__init__(mg, fid, key, cls, create_close_arg)
@@ -275,7 +275,7 @@ class NormalHTTPFile(HTTPFile):
 
   def paths(self):
     return self._paths
-  
+
   def read(self, n= -1):
     return self._fp.read(n)
 

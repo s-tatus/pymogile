@@ -8,7 +8,7 @@ from pymogile.exceptions import MogileFSError
 class TestBackend(unittest.TestCase):
   def setUp(self):
     self.backend = Backend(['127.0.0.1:7001'])
-  
+
   def test_do_request_trackers_not_exist(self):
     backend = Backend(["127.0.0.1:7011", "127.0.0.1:7012"])
     try:
@@ -17,7 +17,7 @@ class TestBackend(unittest.TestCase):
       pass
     else:
       assert False
-      
+
   def test_do_request_one_tracker_down(self):
     backend = Backend(["127.0.0.1:7001", "127.0.0.1:7012"])
     try:
@@ -28,7 +28,7 @@ class TestBackend(unittest.TestCase):
   def test_do_request(self):
       res = self.backend.do_request("get_domains")
       assert res
-  
+
   def test_do_request_cmd_not_exist(self):
     try:
       self.backend.do_request("asdfkljweioav")
@@ -36,7 +36,7 @@ class TestBackend(unittest.TestCase):
       pass
     else:
       assert False
-  
+
   def test_do_request_with_no_cmd(self):
     try:
       self.backend.do_request()   # pylint: disable-msg=E1120
@@ -46,8 +46,8 @@ class TestBackend(unittest.TestCase):
       assert False, "TypeError expected, actual %r" % e
     else:
       assert False
-          
-          
+
+
 if __name__ == "__main__":
   unittest.main()
 

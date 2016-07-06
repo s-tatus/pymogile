@@ -8,10 +8,10 @@ class MogileFSError(Exception):
 
   def __str__(self):
     return self.errstr
-  
+
   def __repr__(self):
     return '<pymogile.exceptions.MogileFSError: %s>' % self.errstr
-    
+
 
 class HTTPError(Exception):
   def __init__(self, code, content):

@@ -6,7 +6,7 @@ put.py - Python HTTP PUT Client
 Copyright 2006, Sean B. Palmer, inamidst.com
 Licensed under the Eiffel Forum License 2.
 
-Basic API usage, once with optional auth: 
+Basic API usage, once with optional auth:
 
 import put
 put.putname('test.txt', 'http://example.org/test')
@@ -26,23 +26,23 @@ import urllib2
 import httplib
 import urlparse
 from optparse import OptionParser
-try: 
+try:
   from cStringIO import StringIO
-except ImportError: 
+except ImportError:
   from StringIO import StringIO
 
 # True by default when running as a script
 # Otherwise, we turn the noise off...
 verbose = False
 
-def barf(msg): 
+def barf(msg):
   print >> sys.stderr, "Error! %s" % msg
   sys.exit(1)
 
-if sys.version_info < (2, 4): 
+if sys.version_info < (2, 4):
   barf("Requires Python 2.4+")
 
-def parseuri(uri): 
+def parseuri(uri):
   """Parse URI, return (host, port, path) tuple.
 
   >>> parseuri('http://example.org/testing?somequery#frag')
@@ -53,7 +53,7 @@ def parseuri(uri):
 
   scheme, netplace, path, query, fragid = urlparse.urlsplit(uri)
 
-  if ':' in netplace: 
+  if ':' in netplace:
     host, port = netplace.split(':', 2)
     port = int(port)
   else: host, port = netplace, 80
@@ -62,7 +62,7 @@ def parseuri(uri):
 
   return host, port, path
 
-def putfile(f, uri, username=None, password=None): 
+def putfile(f, uri, username=None, password=None):
   """HTTP PUT the file f to uri, with optional auth data."""
   host, port, path = parseuri(uri)
 
@@ -74,7 +74,7 @@ def putfile(f, uri, username=None, password=None):
   authorization = None
   tries = 0
 
-  while True: 
+  while True:
     # Attempt to HTTP PUT the data
     h = httplib.HTTPConnection(host, port)
 
@@ -85,17 +85,17 @@ def putfile(f, uri, username=None, password=None):
     h.putheader('Transfer-Encoding', 'chunked')
     h.putheader('Expect', '100-continue')
     h.putheader('Accept', '*/*')
-    if authorization: 
+    if authorization:
       h.putheader('Authorization', authorization)
     h.endheaders()
 
     # Chunked transfer encoding
-    # Cf. 'All HTTP/1.1 applications MUST be able to receive and 
+    # Cf. 'All HTTP/1.1 applications MUST be able to receive and
     # decode the "chunked" transfer-coding'
     # - http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html
-    while True: 
+    while True:
       bytes = f.read(2048)
-      if not bytes: 
+      if not bytes:
         break
 
       length = len(bytes)
@@ -107,22 +107,22 @@ def putfile(f, uri, username=None, password=None):
     status = resp.status # an int
 
     # Got a response, now decide how to act upon it
-    if status in redirect: 
+    if status in redirect:
       location = resp.getheader('Location')
       uri = urlparse.urljoin(uri, location)
       host, port, path = parseuri(uri)
 
       # We may have to authenticate again
-      if authorization: 
+      if authorization:
         authorization = None
 
-    elif status in authenticate: 
+    elif status in authenticate:
       # If we've done this already, break
-      if authorization: 
+      if authorization:
         # barf("Going around in authentication circles")
         barf("Authentication failed")
 
-      if not (username and password): 
+      if not (username and password):
         barf("Need a username and password to authenticate with")
 
       # Get the scheme: Basic or Digest?
@@ -132,32 +132,32 @@ def putfile(f, uri, username=None, password=None):
       i = wauth.index(' ')
       scheme = wauth[:i].lower()
 
-      if scheme in set(['basic', 'digest']): 
-        if verbose: 
+      if scheme in set(['basic', 'digest']):
+        if verbose:
           msg = "Performing %s Authentication..." % scheme.capitalize()
           print >> sys.stderr, msg
       else: barf("Unknown authentication scheme: %s" % scheme)
 
-      if scheme == 'basic': 
+      if scheme == 'basic':
         userpass = username + ':' + password
         userpass = base64.encodestring(userpass).strip()
         authorized, authorization = True, 'Basic ' + userpass
 
-      elif scheme == 'digest': 
-        if verbose: 
+      elif scheme == 'digest':
+        if verbose:
           msg = "uses fragile, undocumented features in urllib2"
           print >> sys.stderr, "Warning! Digest Auth %s" % msg
 
 
         passwd = type('Password', (object,), {
-          'find_user_password': lambda self, *args: (username, password), 
+          'find_user_password': lambda self, *args: (username, password),
           'add_password': lambda self, *args: None
         })()
 
-        req = type('Request', (object,), { 
-          'get_full_url': lambda self: uri, 
-          'has_data': lambda self: None, 
-          'get_method': lambda self: 'PUT', 
+        req = type('Request', (object,), {
+          'get_full_url': lambda self: uri,
+          'has_data': lambda self: None,
+          'get_method': lambda self: 'PUT',
           'get_selector': lambda self: path
         })()
 
@@ -168,12 +168,12 @@ def putfile(f, uri, username=None, password=None):
         userpass = auth.get_authorization(req, chal)
         authorized, authorization = True, 'Digest ' + userpass
 
-    elif status in okay: 
-      if (username and password) and (not authorized): 
+    elif status in okay:
+      if (username and password) and (not authorized):
         msg = "Warning! The supplied username and password went unused"
         print >> sys.stderr, msg
 
-      if verbose: 
+      if verbose:
         resultLine = "Success! Resource %s"
         statuses = {200: 'modified', 201: 'created', 204: 'modified'}
         print resultLine % statuses[status]
@@ -185,7 +185,7 @@ def putfile(f, uri, username=None, password=None):
         body = body.rstrip('\r\n')
         body = body.encode('string_escape')
 
-        if len(body) >= 58: 
+        if len(body) >= 58:
           body = body[:57] + '[...]'
 
         bodyLine = 'Response-Body: "%s"'
@@ -196,25 +196,25 @@ def putfile(f, uri, username=None, password=None):
     else: barf('Got "%s %s"' % (status, resp.reason))
 
     tries += 1
-    if tries >= 50: 
+    if tries >= 50:
       barf("Too many redirects")
 
   return status, resp
 
-def putname(fn, uri, username=None, password=None): 
+def putname(fn, uri, username=None, password=None):
   """HTTP PUT the file with filename fn to uri, with optional auth data."""
   auth = {'username': username, 'password': password}
 
-  if fn != '-': 
+  if fn != '-':
     f = open(fn, 'rb')
     status, resp = putfile(f, uri, **auth)
     f.close()
-  else: 
+  else:
     status, resp = putfile(sys.stdin, uri, **auth)
 
   return status, resp
 
-def put(s, uri, username=None, password=None): 
+def put(s, uri, username=None, password=None):
   """HTTP PUT the string s to uri, with optional auth data."""
   f = StringIO(s)
   f.seek(0)
@@ -223,9 +223,9 @@ def put(s, uri, username=None, password=None):
 
   return status, resp
 
-def main(argv=None): 
-  usage = ('%prog [options] filename uri\n' + 
-        'The filename may be - for stdin\n' + 
+def main(argv=None):
+  usage = ('%prog [options] filename uri\n' +
+        'The filename may be - for stdin\n' +
         'Use command line password at your own risk!')
 
   parser = OptionParser(usage=usage)
@@ -234,15 +234,15 @@ def main(argv=None):
   parser.add_option('-q', '--quiet', action='store_true', help="shhh!")
   options, args = parser.parse_args(argv)
 
-  if len(args) != 2: 
+  if len(args) != 2:
     parser.error("Requires two arguments, filename and uri")
 
   fn, uri = args
-  if not uri.startswith('http:'): 
+  if not uri.startswith('http:'):
     parser.error("The uri argument must start with 'http:'")
 
-  if ((options.username and not options.password) or 
-     (options.password and not options.username)): 
+  if ((options.username and not options.password) or
+     (options.password and not options.username)):
     parser.error("Must have both username and password or neither")
 
   global verbose
@@ -251,5 +251,5 @@ def main(argv=None):
   auth = {'username': options.username, 'password': options.password}
   putname(fn, uri, **auth)
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
   main()
