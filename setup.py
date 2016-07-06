@@ -19,6 +19,7 @@ setup(
     maintainer_email='stefan.foulis@gmail.com',
     license='GPL',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+    test_suite='tests',
     include_package_data=True,
     zip_safe=False
 )
