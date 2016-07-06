@@ -20,6 +20,8 @@ setup(
     license='GPL',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     install_requires=['six>=1.9.0'],
+    test_suite='tests',
+    tests_require=['tox'],
     include_package_data=True,
     zip_safe=False
 )
