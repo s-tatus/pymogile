@@ -5,7 +5,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import time
 import random
 import unittest
+
 from six import StringIO
+from six.moves import range
+
 from pymogile import Client, Admin, MogileFSError
 
 TEST_NS = "mogilefs.client::test_client"
@@ -77,7 +80,7 @@ class TestClient(unittest.TestCase):
 #    fp = client.new_file(key, largefile=True)
 #    assert fp is not None
 #
-#    for _ in xrange(50):
+#    for _ in range(50):
 #      fp.write("0123456789")
 #    fp.close()
 #

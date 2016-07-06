@@ -9,6 +9,8 @@ This module is a client library for the MogileFS distributed file system
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from six.moves import range
+
 from pymogile.backend import Backend
 from pymogile.exceptions import MogileFSError
 from pymogile.file import NormalHTTPFile, LargeHTTPFile

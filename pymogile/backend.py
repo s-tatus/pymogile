@@ -13,7 +13,7 @@ import logging
 from cgi import parse_qs
 from errno import EINPROGRESS, EISCONN
 
-from six.moves import urllib
+from six.moves import range, urllib
 
 from pymogile.exceptions import MogileFSError
 

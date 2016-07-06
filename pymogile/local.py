@@ -25,7 +25,7 @@ import os
 import shutil
 from os import path as osp
 
-from six.moves import urllib
+from six.moves import range, urllib
 
 class MogileFSError(Exception):
   """
@@ -280,7 +280,7 @@ class Client:
     list) where after is the last element of the returned list.
 
     >>> datastore = _make_test_client()
-    >>> for i in xrange(10): datastore['test' + str(i)] = 'Test'
+    >>> for i in range(10): datastore['test' + str(i)] = 'Test'
 
     >>> datastore.list_keys('test')
     ('test9', ['test0', 'test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9'])
@@ -316,7 +316,7 @@ class Client:
 
     Slashes in key names shouldn't confuse list_keys:
 
-    >>> for i in xrange(3): datastore['test/%d.json' % i] = 'Test'
+    >>> for i in range(3): datastore['test/%d.json' % i] = 'Test'
     >>> datastore.list_keys('')
     ('test/2.json', ['test/0.json', 'test/1.json', 'test/2.json'])
     >>> datastore.list_keys('test/')

@@ -73,7 +73,7 @@ def putfile(f, uri, username=None, password=None):
 
   while True:
     # Attempt to HTTP PUT the data
-    h = http_lib.HTTPConnection(host, port)
+    h = http_client.HTTPConnection(host, port)
 
     h.putrequest('PUT', path)
 

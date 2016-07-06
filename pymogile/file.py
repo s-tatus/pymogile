@@ -6,7 +6,8 @@ from . import put
 import logging
 
 from six import StringIO
-from six.moves import http_client, urllib
+from six.moves import http_client, range, urllib
+
 from pymogile.exceptions import MogileFSError, HTTPError
 
 
@@ -94,9 +95,9 @@ class HTTPFile(object):
   def _request(self, path, method, *args, **kwds):
     url = urllib.parse.urlsplit(path)
     if url.scheme == 'http':
-      connection = http.client.HTTPConnection
+      connection = http_client.HTTPConnection
     elif url.scheme == 'https':
-      connection = http.client.HTTPSConnection
+      connection = http_client.HTTPSConnection
     elif not url.scheme:
       raise ValueError("url scheme is empty")
     else:
@@ -187,7 +188,7 @@ class LargeHTTPFile(HTTPFile):
     try:
       res = self._request(self._path, "GET", headers=headers)
     except HTTPError as e:
-      if e.code == http.client.REQUESTED_RANGE_NOT_SATISFIABLE:
+      if e.code == http_client.REQUESTED_RANGE_NOT_SATISFIABLE:
         self._eof = 1
         return ''
       else:

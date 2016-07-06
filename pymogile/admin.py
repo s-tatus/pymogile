@@ -2,10 +2,11 @@
 # pylint: disable-msg=W0311
 from __future__ import absolute_import, print_function, unicode_literals
 
+import six
+from six.moves import range
+
 from pymogile.backend import Backend
 from pymogile.exceptions import MogileFSError
-
-import six
 
 class Admin(object):
   def __init__(self, trackers, readonly=False, timeout=None):
