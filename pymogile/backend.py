@@ -16,7 +16,7 @@ from pymogile.exceptions import MogileFSError
 CONSOLE_HANDLER = logging.StreamHandler()
 
 LOG = logging.getLogger("MogileFS Backend")
-LOG.setLevel(logging.INFO)
+LOG.setLevel(logging.DEBUG)
 LOG.addHandler(CONSOLE_HANDLER)
 
 PROTO_TCP = socket.getprotobyname('tcp')
@@ -32,8 +32,7 @@ def _encode_url_string(args):
         return ''
     buf = []
     for k, v in args.items():
-        buf.append('%s=%s' % (urllib.quote_plus(str(k)),
-                              urllib.quote_plus(str(v))))
+        buf.append('%s=%s' % (urllib.quote_plus(str(k)), urllib.quote_plus(str(v))))
     return '&'.join(buf)
 
 
@@ -114,7 +113,7 @@ class Backend(object):
                 self._sock_cache = None
 
         if not rv:
-            ## may cause an exception
+            # may cause an exception
             sock = self._get_sock()
             if sock is None:
                 raise MogileFSError("couldn't connect to any mogilefs backends: %s" % self._hosts)
@@ -133,7 +132,7 @@ class Backend(object):
                 self.run_hook('do_request_length_mismatch', cmd, self.last_host_connected)
                 raise MogileFSError("send() didn't return expected length (%s,MogileFSError not %s)""" % (rv, reqlen))
 
-        ## wait up to 3 seconds for the socket to come to life
+        # wait up to 3 seconds for the socket to come to life
         if not self._wait_for_readability(sock.fileno(), self._timeout):
             sock.close()
             self.run_hook('do_request_read_timeout', cmd, self.last_host_connected)
