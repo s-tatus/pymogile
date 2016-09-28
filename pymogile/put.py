@@ -96,9 +96,9 @@ def putfile(f, uri, username=None, password=None):
         break
 
       length = len(bytes)
-      h.send('%X\r\n' % length)
-      h.send(bytes + '\r\n')
-    h.send('0\r\n\r\n')
+      h.send(b'%X\r\n' % length)
+      h.send(bytes + b'\r\n')
+    h.send(b'0\r\n\r\n')
 
     resp = h.getresponse()
     status = resp.status # an int
