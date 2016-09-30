@@ -1,5 +1,15 @@
-MogileFS client library for Python
-(based on python-mogilefs-client written by Chihio Sakatoku)
+MogileFS client library for Python2/Python3
+===========================================
+
+This project has been orked from https://github.com/AloneRoad/pymogile
+This version has Python3 support added, but unfortunately we do not have working tests
+so cannot confirm that everything works as expected.
+
+We are running this code in production however and thus far have no issues.
+
+
+Original Docs from AloneRoad version
+====================================
 
 1. Connect to MogileFS
 
