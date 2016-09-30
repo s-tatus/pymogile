@@ -9,51 +9,63 @@ We are running this code in production however and thus far have no issues.
 
 
 Original Docs from AloneRoad version
-====================================
+------------------------------------
 
 1. Connect to MogileFS
 
->>> from pymogile import Client, MogileFSError
->>> datastore = Client(domain='test', trackers=['127.0.0.1:7001'])
+```python
+from pymogile import Client, MogileFSError
+datastore = Client(domain='test', trackers=['127.0.0.1:7001'])
+```
 
 
 2. New file
 
->>> fp = datastore.new_file('foobar.txt')
->>> fp.write('foo')
->>> fp.close()
+```python
+fp = datastore.new_file('foobar.txt')
+fp.write('foo')
+fp.close()
+```
 
 
 3. Get paths
 
->>> datastore.get_paths('foobar.txt')
+```python
+> datastore.get_paths('foobar.txt')
 ['http://127.0.0.1:7500/dev4/0/000/251/0000251237.fid', 'http://127.0.0.1:7500/dev6/0/000/251/0000251237.fid']
->>> print datastore.get_paths('404.txt')
+> print datastore.get_paths('404.txt')
 []
+```
 
 4. Get file data
 
->>> datastore.get_file_data('404.txt')
->>> datastore.get_file_data('foobar.txt')
+```python
+> datastore.get_file_data('404.txt')
+> datastore.get_file_data('foobar.txt')
 'foo'
+```
 
 
 5. Rename file
 
->>> datastore.rename('404.txt', 'test.txt')
-False
->>> datastore.rename('foobar.txt', 'foo.txt')
-True
->>> datastore.get_file_data('foobar.txt')
->>> datastore.get_file_data('test.txt')
->>> datastore.get_file_data('foo.txt')
-'foo'
 
+```python
+> datastore.rename('404.txt', 'test.txt')
+False
+> datastore.rename('foobar.txt', 'foo.txt')
+True
+> datastore.get_file_data('foobar.txt')
+> datastore.get_file_data('test.txt')
+> datastore.get_file_data('foo.txt')
+'foo'
+```
 
 6. Remove file
 
->>> datastore.delete('foobar.txt')
+```python
+> datastore.delete('foobar.txt')
 False
->>> datastore.delete('foo.txt')
+> datastore.delete('foo.txt')
 True
->>> datastore.get_file_data('foo.txt')
+> datastore.get_file_data('foo.txt')
+```
