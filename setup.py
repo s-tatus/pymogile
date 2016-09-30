@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pymogile',
-    version='2.0.2',
+    version='2.0.3',
     description="pymogile",
     long_description="""Python MogileFS Client""",
     classifiers=(
@@ -15,8 +15,8 @@ setup(
     ),
     author='AloneRoad',
     author_email='aloneroad@gmail.com',
-    maintainer='stefanfoulis',
-    maintainer_email='stefan.foulis@gmail.com',
+    maintainer='Devin Barry',
+    maintainer_email='devinbarry@gmail.com',
     license='GPL',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     install_requires=['six>=1.9.0'],
