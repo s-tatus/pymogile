@@ -1,7 +1,7 @@
 MogileFS client library for Python2/Python3
 ===========================================
 
-This project has been forked from https://github.com/AloneRoad/pymogile
+This project has been forked from https://github.com/AloneRoad/pymogile.
 This version has Python3 support added, but unfortunately we do not have working tests
 so cannot confirm that everything works as expected.
 
@@ -11,7 +11,7 @@ We are running this code in production however and thus far have no issues.
 Original Docs from AloneRoad version
 ------------------------------------
 
-1. Connect to MogileFS
+### 1. Connect to MogileFS
 
 ```python
 from pymogile import Client, MogileFSError
@@ -19,7 +19,7 @@ datastore = Client(domain='test', trackers=['127.0.0.1:7001'])
 ```
 
 
-2. New file
+### 2. New file
 
 ```python
 fp = datastore.new_file('foobar.txt')
@@ -28,7 +28,7 @@ fp.close()
 ```
 
 
-3. Get paths
+### 3. Get paths
 
 ```python
 > datastore.get_paths('foobar.txt')
@@ -37,7 +37,7 @@ fp.close()
 []
 ```
 
-4. Get file data
+### 4. Get file data
 
 ```python
 > datastore.get_file_data('404.txt')
@@ -46,7 +46,7 @@ fp.close()
 ```
 
 
-5. Rename file
+### 5. Rename file
 
 
 ```python
@@ -60,7 +60,7 @@ True
 'foo'
 ```
 
-6. Remove file
+### 6. Remove file
 
 ```python
 > datastore.delete('foobar.txt')
