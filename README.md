@@ -1,7 +1,7 @@
 MogileFS client library for Python2/Python3
 ===========================================
 
-This project has been orked from https://github.com/AloneRoad/pymogile
+This project has been forked from https://github.com/AloneRoad/pymogile
 This version has Python3 support added, but unfortunately we do not have working tests
 so cannot confirm that everything works as expected.
 
