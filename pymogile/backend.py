@@ -116,8 +116,7 @@ class Backend(object):
                 if rv != reqlen:
                     self.run_hook('do_request_length_mismatch', cmd,
                                   self.last_host_connected)
-                    raise MogileFSError("""
-          send() didn't return expected length (%s, not %s)""" % (rv, reqlen))
+                    raise MogileFSError("send() didn't return expected length (%s, not %s)" % (rv, reqlen))
             except socket.error as e:
                 self.run_hook('do_request_send_error', cmd, self.last_host_connected)
                 self._sock_cache = None
@@ -126,8 +125,7 @@ class Backend(object):
             # May cause an exception
             sock = self._get_sock()
             if sock is None:
-                raise MogileFSError("""
-        couldn't connect to any mogilefs backends: %s""" % self._hosts)
+                raise MogileFSError("Couldn't connect to any mogilefs backends: %s" % self._hosts)
 
             self.run_hook('do_request_start', cmd, self.last_host_connected)
             LOG.debug("SOCK: %r, REQ: %r" % (sock, req))
@@ -137,21 +135,18 @@ class Backend(object):
                 rv = sock.send(req, FLAG_NOSIGNAL)
             except socket.error as e:
                 self.run_hook('do_request_send_error', cmd, self.last_host_connected)
-                raise MogileFSError("""
-        couldn't send command: [%s]. reason: %s""" % (req, e))
+                raise MogileFSError("Couldn't send command: [%s]. reason: %s" % (req, e))
 
             if rv != reqlen:
                 self.run_hook('do_request_length_mismatch', cmd, self.last_host_connected)
-                raise MogileFSError("""
-        send() didn't return expected length (%s,MogileFSError not %s)""" % (rv, reqlen))
+                raise MogileFSError("send() didn't return expected length (%s,MogileFSError not %s)" % (rv, reqlen))
 
         # Wait up to 3 seconds for the socket to come to life
         if not self._wait_for_readability(sock.fileno(), self._timeout):
             sock.close()
             self.run_hook('do_request_read_timeout', cmd, self.last_host_connected)
-            raise MogileFSError("""
-      tracker socket never became readable (%s) when sending command: [%s]""" \
-                                % (self.last_host_connected, req))
+            raise MogileFSError("Tracker socket never became readable (%s) when sending command: [%s]" % (
+                self.last_host_connected, req))
 
         sockfile = sock.makefile()
         line = sockfile.readline()
