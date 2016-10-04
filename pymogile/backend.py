@@ -36,8 +36,7 @@ def _encode_url_string(args):
         return ''
     buf = []
     for k, v in args.items():
-        buf.append('%s=%s' % (urllib.parse.quote_plus(str(k)),
-                              urllib.parse.quote_plus(str(v))))
+        buf.append('{}={}'.format(urllib.parse.quote_plus(str(k)), urllib.parse.quote_plus(str(v))))
     return '&'.join(buf)
 
 
@@ -95,7 +94,10 @@ class Backend(object):
         return not not (select.select([fileno], [], [], timeout)[0])
 
     def do_request(self, cmd, args=None):
-        req = b'%s %s\r\n' % (cmd, _encode_url_string(args))
+        # py3 str / py2 unicode
+        request = '{} {}\r\n'.format(cmd, _encode_url_string(args))
+        # py3 bytes / py2 str
+        req = request.encode('ascii')
         reqlen = len(req)
 
         if FLAG_NOSIGNAL:
