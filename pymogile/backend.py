@@ -203,7 +203,8 @@ class Backend(object):
         else:
             return None
 
-    def _connect_sock(self, sock, sin, timeout=0.25):
+    @staticmethod
+    def _connect_sock(sock, sin, timeout=0.25):
         if timeout:
             # make the socket non-blocking for the connection if wanted, but
             # unconditionally set it back to blocking mode at the endut:
