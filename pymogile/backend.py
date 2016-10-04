@@ -95,7 +95,7 @@ class Backend(object):
         return not not (select.select([fileno], [], [], timeout)[0])
 
     def do_request(self, cmd, args=None):
-        req = '%s %s\r\n' % (cmd, _encode_url_string(args))
+        req = b'%s %s\r\n' % (cmd, _encode_url_string(args))
         reqlen = len(req)
 
         if FLAG_NOSIGNAL:
