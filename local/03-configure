@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mogadm host add mogile --ip="$1" --port=7500 --status=alive
+mogadm device add mogile 1

@@ -1,0 +1,62 @@
+#!/bin/sh
+
+# Based on https://code.google.com/p/mogilefs/wiki/InstallHowTo
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Install build tools and io stats
+apt-get install -yq build-essential sysstat
+
+# Install MySQL (no password)
+apt-get install -yq mysql-server libdbd-mysql-perl
+
+# Install dependencies
+perl -MCPAN -e 'install "IO::AIO"'
+perl -MCPAN -e 'install "Perlbal::XS::HTTPHeaders"'
+
+# Install MogileFS
+perl -MCPAN -e 'install "MogileFS:Server"'
+perl -MCPAN -e 'install "MogileFS:Utils"'
+
+# Setup DB
+mysql <<EOD
+CREATE DATABASE mogilefs;
+GRANT ALL ON mogilefs.* TO 'mogile'@'%';
+SET PASSWORD FOR 'mogile'@'%' = OLD_PASSWORD( 'kiosk' );
+FLUSH PRIVILEGES;
+quit
+EOD
+
+# Database config
+ mogdbsetup --dbname=mogilefs --dbuser=mogile --dbpassword=kiosk
+
+# Tracker config
+mkdir /etc/mogilefs
+cat > /etc/mogilefs/mogilefsd.conf <<EOD
+db_dsn = DBI:mysql:mogilefs;port=3306;mysql_connect_timeout=5
+db_user = mogile
+db_pass = kiosk
+conf_port = 7001
+listener_jobs = 5
+node_timeout = 5
+rebalance_ignore_missing = 1
+EOD
+
+# Add user
+useradd mogile -G staff
+
+# Create storage
+mkdir -p /var/mogdata/dev1
+chown -R mogile /var/mogdata
+
+# Storage config
+cat > /etc/mogilefs/mogstored.conf <<EOD
+httplisten=0.0.0.0:7500
+mgmtlisten=0.0.0.0:7501
+docroot=/var/mogdata
+EOD
+
+# Delete use lib, prevent us from running
+for f in $(ls /usr/local/bin/mog*); do
+  sed -i '/use lib /d' "$f"
+done

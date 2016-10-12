@@ -1,0 +1,3 @@
+#!/bin/sh
+
+su mogile -c "mogilefsd -c /etc/mogilefs/mogilefsd.conf --daemon"
