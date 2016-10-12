@@ -48,7 +48,7 @@ def _decode_url_string(arg):
 
 
 class Backend(object):
-    
+
     def __init__(self, trackers, timeout=None):
         self.last_host_connected = None
         self._hosts = []
@@ -235,7 +235,7 @@ class Backend(object):
 
     def _get_sock(self):
         size = len(self._hosts)
-        tries = size > 15 and 15 or size
+        tries = min(size, 15)
         idx = random.randint(0, tries)
         now = time.time()
 

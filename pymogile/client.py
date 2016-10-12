@@ -207,7 +207,7 @@ class Client(object):
 
     return len(content)
 
-  def get_paths(self, key, noverify=1, zone='alt', pathcount=2):
+  def get_paths(self, key, noverify=True, zone='alt', pathcount=2):
     """
     Given a key, returns an array of all the locations (HTTP URLs) that the file
     has been replicated to.
@@ -216,7 +216,7 @@ class Client(object):
 
     params = {'domain': self.domain,
               'key': key,
-              'noverify': noverify and 1 or 0,
+              'noverify': int(bool(noverify)),
               'zone': zone,
               'pathcount': pathcount}
 
