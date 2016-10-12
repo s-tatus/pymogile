@@ -5,7 +5,7 @@ This project has been forked from https://github.com/AloneRoad/pymogile.
 This version has Python3 support added, but unfortunately we do not have working tests
 so cannot confirm that everything works as expected.
 
-We are running this code in production however and thus far have no issues.
+This code runs under Python 2 but Python 3 has issues at the moment. It is under (slow) active development.
 
 
 Original Docs from AloneRoad version
