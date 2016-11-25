@@ -17,16 +17,10 @@ HOSTS   = ["127.0.0.1:7001"]
 class TestClient(unittest.TestCase):
   def setUp(self):
     self.moga = Admin(HOSTS)
-    try:
-      self.moga.create_domain(TEST_NS)
-    except MogileFSError:
-      pass
+    self.moga.create_domain(TEST_NS)
 
   def tearDown(self):
-    try:
-      self.moga.delete_domain(TEST_NS)
-    except MogileFSError:
-      pass
+    self.moga.delete_domain(TEST_NS)
 
   def test_sleep(self):
     client = Client(TEST_NS, HOSTS)

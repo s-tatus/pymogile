@@ -6,27 +6,57 @@ import unittest
 
 import six
 
-from pymogile import Admin
+from pymogile import Admin, MogileFSError
 
 
-DOMAIN   = "testdomain"
-CLASS    = "testclass"
+HOST = "testhost"
+DOMAIN = "testdomain"
+CLASS = "testclass"
 TRACKERS = ["127.0.0.1:7001"]
+
 
 class AdminTest(unittest.TestCase):
   def setUp(self):
     self.mogilefs = Admin(TRACKERS)
-    try:
-      self.mogilefs.delete_class(DOMAIN, CLASS)
-      self.mogilefs.delete_domain(DOMAIN)
-    except:
-      pass
+    self._delete_classes_and_domains_and_hosts()
 
-  def test_create_delete_domain(self):
-    self.assertEqual(self.mogilefs.delete_domain(DOMAIN), False)
+  def tearDown(self):
+    self._delete_classes_and_domains_and_hosts()
+
+  def _delete_classes_and_domains_and_hosts(self):
+    if DOMAIN in self.mogilefs.get_domains():
+      if CLASS in self.mogilefs.get_domains()[DOMAIN]:
+        self.mogilefs.delete_class(DOMAIN, CLASS)
+      self.mogilefs.delete_domain(DOMAIN)
+    if any([HOST in host['hostname'] for host in self.mogilefs.get_hosts()]):
+      self.mogilefs.delete_host(HOST)
+
+  def test_create_domain(self):
     self.assertEqual(self.mogilefs.create_domain(DOMAIN), True)
-    self.assertEqual(self.mogilefs.create_domain(DOMAIN), False)
+
+  def test_create_and_delete_domain(self):
+    self.mogilefs.create_domain(DOMAIN)
     self.assertEqual(self.mogilefs.delete_domain(DOMAIN), True)
+
+  def test_create_existing_domain(self):
+    self.mogilefs.create_domain(DOMAIN)
+    with self.assertRaises(MogileFSError):
+      self.mogilefs.create_domain(DOMAIN)
+
+  def test_create_class(self):
+    self.mogilefs.create_domain(DOMAIN)
+    self.assertEqual(self.mogilefs.create_class(DOMAIN, CLASS, 2), True)
+
+  def test_create_and_delete_class(self):
+    self.mogilefs.create_domain(DOMAIN)
+    self.mogilefs.create_class(DOMAIN, CLASS, 2)
+    self.assertEqual(self.mogilefs.delete_class(DOMAIN, CLASS), True)
+
+  def test_create_existing_class(self):
+    self.mogilefs.create_domain(DOMAIN)
+    self.mogilefs.create_class(DOMAIN, CLASS, 2)
+    with self.assertRaises(MogileFSError):
+      self.mogilefs.create_class(DOMAIN, CLASS, 2)
 
   def test_get_domains(self):
     self.mogilefs.create_domain(DOMAIN)
@@ -38,13 +68,6 @@ class AdminTest(unittest.TestCase):
     assert ret[DOMAIN][CLASS] == 2, ret
 
     self.mogilefs.delete_domain(DOMAIN)
-
-  def test_create_delete_class(self):
-    self.assertEqual(self.mogilefs.create_domain(DOMAIN), True)
-    self.assertEqual(self.mogilefs.create_class(DOMAIN, CLASS, 2), True)
-    self.assertEqual(self.mogilefs.create_class(DOMAIN, CLASS, 2), False)
-    self.assertEqual(self.mogilefs.delete_class(DOMAIN, CLASS), True)
-    self.assertEqual(self.mogilefs.delete_class(DOMAIN, CLASS), False)
 
   def test_get_server_settings(self):
     res = self.mogilefs.server_settings()
@@ -72,12 +95,14 @@ class AdminTest(unittest.TestCase):
       #assert isinstance(d['mb_used'], six.integer_types)
       #assert isinstance(d['weight'], six.integer_types)
 
-  def test_create_delete_host(self):
-    self.assertEqual(self.mogilefs.create_host('testhost', '192.168.0.1', 7500),
-                     {'status': 'down', 'hostid': '1', 'http_port': '7500', 'hostname': 'testhost', 'hostip': '192.168.0.1'})
-    self.assertEqual(self.mogilefs.update_host('testhost', port=7501, status='alive'),
-                     {'status': 'alive', 'hostid': '1', 'http_port': '7501', 'hostname': 'testhost', 'hostip': '192.168.0.1'})
-    self.assertEqual(self.mogilefs.delete_host('testhost'), True)
+  def test_create_host(self):
+    response = self.mogilefs.create_host(HOST, '192.168.0.1', 7500)
+    self.assertIsInstance(response, dict)
+
+  def test_create_and_delete_host(self):
+    self.mogilefs.create_host(HOST, '192.168.0.1', 7500)
+    response = self.mogilefs.delete_host(HOST)
+    self.assertEqual(response, True)
 
 #  def test_update_device(self):
 #      ## TODO

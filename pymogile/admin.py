@@ -171,6 +171,7 @@ class Admin(object):
 
   def delete_host(self, host):
     self.backend.do_request("delete_host", {'host': host})
+    return True
 
   def create_device(self, hostname, devid, hostip=None, state=None):
     params = {'hostname': hostname, 'devid': devid}
