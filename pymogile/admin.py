@@ -22,7 +22,6 @@ class Admin(object):
     else:
       params = None
     res = self.backend.do_request("get_hosts", params)
-    print(res)
     results = []
     fields = ["hostid",
               "status",
@@ -172,6 +171,7 @@ class Admin(object):
 
   def delete_host(self, host):
     self.backend.do_request("delete_host", {'host': host})
+    return True
 
   def create_device(self, hostname, devid, hostip=None, state=None):
     params = {'hostname': hostname, 'devid': devid}
