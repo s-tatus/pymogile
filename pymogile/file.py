@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from . import put
 import logging
 
-from six import StringIO
+from six import BytesIO
 from six.moves import http_client, range, urllib
 
 from pymogile.exceptions import MogileFSError, HTTPError
@@ -256,7 +256,7 @@ class NormalHTTPFile(HTTPFile):
 
         if backup_dests is None:
             backup_dests = []
-        self._fp = StringIO()
+        self._fp = BytesIO()
         self._paths = [(devid, path)] + list(backup_dests)
         self._is_closed = 0
 
