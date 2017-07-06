@@ -105,7 +105,7 @@ class HTTPFile(object):
             raise ValueError("unsupported url scheme '%s'" % url.scheme)
 
         conn = connection(url.netloc)
-        target = urllib.parse.urlunsplit((None, None, url.path, url.query, url.fragment))
+        target = urllib.parse.urlunsplit(("", "", url.path, url.query, url.fragment))
         conn.request(method, target, *args, **kwds)
         res = conn.getresponse()
         if is_success(res):
