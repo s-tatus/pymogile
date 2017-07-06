@@ -145,7 +145,7 @@ class Client(object):
     return LargeHTTPFile(path=path, backup_dests=backup_dests, readonly=1)
 
 
-  def store_file(self, key, fp, cls=None, chunk_size=8192):
+  def store_file(self, key, fp, cls=None, chunk_size=8192, largefile=False):
     """
     Wrapper around new_file, print, and close.
 
@@ -166,7 +166,7 @@ class Client(object):
     self.run_hook('store_file_start', params)
 
     try:
-      new_file = self.new_file(key, cls)
+      new_file = self.new_file(key, cls, largefile=largefile)
     except MogileFSError:
       fp.close()
       return False
