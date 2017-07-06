@@ -96,7 +96,7 @@ def putfile(f, uri, username=None, password=None):
         break
 
       length = len(bytes)
-      h.send(b'%X\r\n' % length)
+      h.send(('%X\r\n' % length).encode('utf-8'))
       h.send(bytes + b'\r\n')
     h.send(b'0\r\n\r\n')
 
