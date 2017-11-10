@@ -84,7 +84,7 @@ def putfile(f, uri, username=None, password=None):
     h.putheader('Transfer-Encoding', 'chunked')
     h.putheader('Expect', '100-continue')
     h.putheader('Accept', '*/*')
-    h.putheader('Content-Length', len(bytes))
+    h.putheader('Content-Length', str(len(bytes)))
     if authorization:
       h.putheader('Authorization', authorization)
     h.endheaders()
