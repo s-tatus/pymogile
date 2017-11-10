@@ -26,7 +26,7 @@ import sys
 import base64
 from optparse import OptionParser
 from six.moves import http_client, urllib
-from six import StringIO
+from six import StringIO, BytesIO
 
 # True by default when running as a script
 # Otherwise, we turn the noise off...
@@ -73,8 +73,10 @@ def putfile(f, uri, username=None, password=None):
 
   while True:
     # Attempt to HTTP PUT the data
+    bytes = f.read()
+    f = BytesIO(bytes)
     h = http_client.HTTPConnection(host, port)
-
+    
     h.putrequest('PUT', path)
 
     h.putheader('User-Agent', 'put.py/1.0')
@@ -82,6 +84,7 @@ def putfile(f, uri, username=None, password=None):
     h.putheader('Transfer-Encoding', 'chunked')
     h.putheader('Expect', '100-continue')
     h.putheader('Accept', '*/*')
+    h.putheader('Content-Length', len(bytes))
     if authorization:
       h.putheader('Authorization', authorization)
     h.endheaders()
