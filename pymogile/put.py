@@ -73,11 +73,13 @@ def putfile(f, uri, username=None, password=None):
 
   while True:
     # Attempt to HTTP PUT the data
-    # bytes = f.read()
-    # f = BytesIO(bytes)
+    bytes = f.read()
+    f = BytesIO(bytes)
     h = http_client.HTTPConnection(host, port)
     headers = {
         'User-Agent': 'put.py/1.0',
+        'Accept': '*/*',
+        'Content-Length', len(bytes)
     }
     if authorization:
       headers['Authorization'] = authorization
