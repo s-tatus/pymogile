@@ -79,7 +79,7 @@ def putfile(f, uri, username=None, password=None):
     headers = {
         'User-Agent': 'put.py/1.0',
         'Accept': '*/*',
-        'Content-Length', len(bytes)
+        'Content-Length': len(bytes)
     }
     if authorization:
       headers['Authorization'] = authorization
