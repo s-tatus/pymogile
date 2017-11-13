@@ -73,35 +73,41 @@ def putfile(f, uri, username=None, password=None):
 
   while True:
     # Attempt to HTTP PUT the data
-    bytes = f.read()
-    f = BytesIO(bytes)
+    # bytes = f.read()
+    # f = BytesIO(bytes)
     h = http_client.HTTPConnection(host, port)
-    
-    h.putrequest('PUT', path)
-
-    h.putheader('User-Agent', 'put.py/1.0')
-    h.putheader('Connection', 'keep-alive')
-    h.putheader('Transfer-Encoding', 'chunked')
-    h.putheader('Expect', '100-continue')
-    h.putheader('Accept', '*/*')
-    h.putheader('Content-Length', str(len(bytes)))
+    headers = {
+        'User-Agent': 'put.py/1.0',
+    }
     if authorization:
-      h.putheader('Authorization', authorization)
-    h.endheaders()
+      headers['Authorization'] = authorization
+    
+    h.request('PUT', uri, f, headers)
+    # h.putrequest('PUT', path)
+
+    # h.putheader('User-Agent', 'put.py/1.0')
+    # h.putheader('Connection', 'closed')
+    # h.putheader('Transfer-Encoding', 'chunked')
+    # h.putheader('Expect', '100-continue')
+    # h.putheader('Accept', '*/*')
+    # h.putheader('Content-Length', len(bytes))
+    # if authorization:
+    #   h.putheader('Authorization', authorization)
+    # h.endheaders()
 
     # Chunked transfer encoding
     # Cf. 'All HTTP/1.1 applications MUST be able to receive and
     # decode the "chunked" transfer-coding'
     # - http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html
-    while True:
-      bytes = f.read(2048)
-      if not bytes:
-        break
+    # while True:
+    #  bytes = f.read(2048)
+    #  if not bytes:
+    #    break
 
-      length = len(bytes)
-      h.send(('%X\r\n' % length).encode('utf-8'))
-      h.send(bytes + b'\r\n')
-    h.send(b'0\r\n\r\n')
+    #  length = len(bytes)
+    #  h.send(('%X\r\n' % length).encode('utf-8'))
+    #  h.send(bytes + b'\r\n')
+    # h.send(b'0\r\n\r\n')
 
     resp = h.getresponse()
     status = resp.status # an int
